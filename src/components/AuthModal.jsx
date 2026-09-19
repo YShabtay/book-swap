@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 
 const inputClass =
-  'w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none transition focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100'
+  'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none transition focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100'
 
 export default function AuthModal({ open, onClose, hintKey, onSuccess }) {
   const { t } = useLanguage()
@@ -52,7 +52,7 @@ export default function AuthModal({ open, onClose, hintKey, onSuccess }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm overflow-hidden rounded-2xl bg-white shadow-2xl"
+        className="max-h-[90vh] w-[95vw] sm:w-full max-w-sm mx-auto overflow-y-auto rounded-2xl bg-white shadow-2xl"
       >
         <div className="flex items-start justify-between gap-3 border-b border-slate-100 p-5 pb-4">
           <div className="flex items-center gap-3">
@@ -67,7 +67,7 @@ export default function AuthModal({ open, onClose, hintKey, onSuccess }) {
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-full p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
             aria-label="Close"
           >
             <X size={20} />
@@ -80,7 +80,7 @@ export default function AuthModal({ open, onClose, hintKey, onSuccess }) {
               key={key}
               type="button"
               onClick={() => switchTab(key)}
-              className={`relative flex-1 rounded-lg py-2 text-sm font-semibold transition ${
+              className={`relative min-h-11 flex-1 rounded-lg py-2 text-sm font-semibold transition ${
                 tab === key ? 'bg-indigo-50 text-indigo-600' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
@@ -138,7 +138,7 @@ export default function AuthModal({ open, onClose, hintKey, onSuccess }) {
 
           <button
             type="submit"
-            className="mt-1 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-200 transition hover:shadow-lg active:scale-95"
+            className="mt-1 min-h-11 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-200 transition hover:shadow-lg active:scale-95"
           >
             {t(tab === 'register' ? 'authCreateAccount' : 'authSignInSubmit')}
           </button>

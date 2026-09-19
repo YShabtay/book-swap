@@ -142,7 +142,7 @@ export default function LocationCombobox({
     : value
 
   return (
-    <div className="relative flex-1 min-w-[11rem]">
+    <div className="relative w-full sm:flex-1 sm:min-w-[11rem]">
       <MapPin
         size={16}
         className="pointer-events-none absolute top-1/2 -translate-y-1/2 text-slate-400 rtl:right-3 ltr:left-3"
@@ -156,7 +156,7 @@ export default function LocationCombobox({
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
         placeholder={placeholder || t('searchCityPlaceholder')}
-        className="w-full rounded-xl border border-slate-200 bg-white py-2.5 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 rtl:pr-9 rtl:pl-8 ltr:pl-9 ltr:pr-8"
+        className="min-h-11 w-full rounded-xl border border-slate-200 bg-white py-2.5 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 rtl:pr-9 rtl:pl-8 ltr:pl-9 ltr:pr-8"
       />
       {value && (
         <button
@@ -174,7 +174,7 @@ export default function LocationCombobox({
       {open && (
         <div
           onMouseDown={(e) => e.preventDefault()}
-          className="absolute z-40 mt-2 w-full max-w-xs overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
+          className="absolute z-40 mt-2 w-full max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg sm:max-w-xs"
         >
           {showGps && isDetectMode && (
             <button

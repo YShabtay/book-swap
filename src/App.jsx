@@ -378,7 +378,7 @@ export default function App() {
   const activeChatProposal = proposals.find((p) => p.id === chatProposalId) || null
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen w-full overflow-x-hidden bg-slate-50">
       <Header
         onLogoClick={handleLogoClick}
         onAddBook={handleAddBookClick}

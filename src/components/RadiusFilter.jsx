@@ -60,7 +60,7 @@ export default function RadiusFilter({ value, onChange, disabled, title }) {
   const label = isAny ? t('radius_any') : isChipMatch ? t('radiusUpToKm', { km }) : t('radiusCustomKm', { km })
 
   return (
-    <div className="relative flex-1 min-w-[9.5rem]" ref={containerRef}>
+    <div className="relative w-full sm:flex-1 sm:min-w-[9.5rem]" ref={containerRef}>
       <Ruler
         size={16}
         className="pointer-events-none absolute top-1/2 -translate-y-1/2 text-slate-400 rtl:right-3 ltr:left-3"
@@ -70,13 +70,13 @@ export default function RadiusFilter({ value, onChange, disabled, title }) {
         onClick={() => setOpen((o) => !o)}
         disabled={disabled}
         title={title}
-        className="flex w-full items-center rounded-xl border border-slate-200 bg-white py-2.5 text-start text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:opacity-50 rtl:pr-9 rtl:pl-3 ltr:pl-9 ltr:pr-3"
+        className="flex min-h-11 w-full items-center rounded-xl border border-slate-200 bg-white py-2.5 text-start text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:opacity-50 rtl:pr-9 rtl:pl-3 ltr:pl-9 ltr:pr-3"
       >
         <span className="truncate">{label}</span>
       </button>
 
       {open && !disabled && (
-        <div className="absolute z-40 mt-2 w-72 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-4 shadow-lg">
+        <div className="absolute z-40 mt-2 w-full max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-4 shadow-lg sm:w-72">
 
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-semibold text-slate-700">{t('radiusNoLimit')}</span>
@@ -99,7 +99,7 @@ export default function RadiusFilter({ value, onChange, disabled, title }) {
                   min={1}
                   value={draft}
                   onChange={handleNumberChange}
-                  className="w-20 rounded-lg border border-slate-200 px-2 py-1.5 text-sm font-medium text-slate-800 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                  className="min-h-11 w-20 rounded-lg border border-slate-200 px-2 py-1.5 text-sm font-medium text-slate-800 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
                 />
                 <span className="text-sm text-slate-500">{t('kmUnit')}</span>
               </div>
