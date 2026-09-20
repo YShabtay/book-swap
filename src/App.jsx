@@ -234,10 +234,6 @@ export default function App() {
     }
   }
 
-  const handleLockedBookOfferAttempt = () => {
-    setLockedSwapWarningOpen(true)
-  }
-
   const handleOpenRequestsFromWarning = () => {
     setLockedSwapWarningOpen(false)
     setSwapModalOpen(false)
@@ -559,7 +555,6 @@ export default function App() {
           setSwapModalOpen(false)
           setAddBookOpen(true)
         }}
-        onLockedBookClick={handleLockedBookOfferAttempt}
       />
 
       <LockedSwapModal

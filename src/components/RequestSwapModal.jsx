@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { X, Repeat, BookPlus, Check, Lock } from 'lucide-react'
+import { X, Repeat, BookPlus, Check } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext.jsx'
 
-export default function RequestSwapModal({ open, book, myBooks, onClose, onSubmit, onAddBookCta, onLockedBookClick }) {
+export default function RequestSwapModal({ open, book, myBooks, onClose, onSubmit, onAddBookCta }) {
   const { t, lang } = useLanguage()
   const [offeredBookId, setOfferedBookId] = useState('')
   const [note, setNote] = useState('')
@@ -10,6 +10,7 @@ export default function RequestSwapModal({ open, book, myBooks, onClose, onSubmi
   if (!open || !book) return null
 
   const title = lang === 'he' ? book.titleHe : book.titleEn
+  const offerableBooks = myBooks.filter((mb) => (mb.status || 'available') === 'available')
 
   const handleClose = () => {
     setOfferedBookId('')
@@ -54,54 +55,52 @@ export default function RequestSwapModal({ open, book, myBooks, onClose, onSubmi
           </button>
         </div>
 
-        {myBooks.length === 0 ? (
+        {offerableBooks.length === 0 ? (
           <div className="flex flex-col items-center gap-3 p-8 text-center">
             <h3 className="text-base font-bold text-slate-800">{t('proposalNoBooksTitle')}</h3>
             <p className="text-sm text-slate-500">{t('proposalNoBooksSub')}</p>
-            <button
-              type="button"
-              onClick={onAddBookCta}
-              className="mt-1 flex min-h-11 items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
-            >
-              <BookPlus size={16} />
-              {t('proposalAddBookCta')}
-            </button>
+            <div className="mt-1 flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={onClose}
+                className="min-h-11 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+              >
+                {t('cancel')}
+              </button>
+              <button
+                type="button"
+                onClick={onAddBookCta}
+                className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+              >
+                <BookPlus size={16} />
+                {t('proposalAddBookCta')}
+              </button>
+            </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-5">
             <div>
               <p className="mb-2 text-sm font-semibold text-slate-700">{t('proposalChooseBook')}</p>
               <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-                {myBooks.map((mb) => {
+                {offerableBooks.map((mb) => {
                   const mbTitle = lang === 'he' ? mb.titleHe : mb.titleEn
                   const selected = offeredBookId === mb.id
-                  const isLocked = (mb.status || 'available') !== 'available'
                   return (
                     <button
                       key={mb.id}
                       type="button"
-                      onClick={() => (isLocked ? onLockedBookClick?.(mb) : setOfferedBookId(mb.id))}
+                      onClick={() => setOfferedBookId(mb.id)}
                       className={`relative overflow-hidden rounded-xl border-2 text-start transition ${
-                        isLocked
-                          ? 'border-slate-200 opacity-60'
-                          : selected
-                            ? 'border-indigo-500 ring-2 ring-indigo-100'
-                            : 'border-slate-200 hover:border-indigo-300'
+                        selected ? 'border-indigo-500 ring-2 ring-indigo-100' : 'border-slate-200 hover:border-indigo-300'
                       }`}
                     >
                       <div className="aspect-[3/4] w-full overflow-hidden bg-slate-100">
                         <img src={mb.cover} alt={mbTitle} className="h-full w-full object-cover" />
                       </div>
-                      {isLocked ? (
-                        <span className="absolute end-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-white">
-                          <Lock size={11} />
+                      {selected && (
+                        <span className="absolute end-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-white">
+                          <Check size={12} />
                         </span>
-                      ) : (
-                        selected && (
-                          <span className="absolute end-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-white">
-                            <Check size={12} />
-                          </span>
-                        )
                       )}
                       <p className="line-clamp-2 px-1.5 py-1.5 text-xs font-semibold text-slate-700">{mbTitle}</p>
                     </button>
