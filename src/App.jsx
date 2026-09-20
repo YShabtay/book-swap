@@ -74,6 +74,7 @@ export default function App() {
 
   const booksRef = useRef(books)
   const userRef = useRef(user)
+  const proposalsRef = useRef(proposals)
   const timeoutsRef = useRef([])
   const hasSimulatedIncomingRef = useRef(false)
 
@@ -95,6 +96,7 @@ export default function App() {
     }
   }, [books])
   useEffect(() => {
+    proposalsRef.current = proposals
     try {
       localStorage.setItem(PROPOSALS_STORAGE_KEY, JSON.stringify(proposals))
     } catch {
@@ -205,6 +207,8 @@ export default function App() {
 
   const handleRequestSwapClick = (book) => {
     if (user) {
+      const status = book.status || 'available'
+      if (status !== 'available') return
       const alreadyRequested = proposals.some((p) => p.requestedBookId === book.id && p.offeredByUserId === user.id)
       if (alreadyRequested) return
       setSwapTarget(book)
@@ -285,20 +289,37 @@ export default function App() {
 
   // --- Swap proposals --------------------------------------------------------
 
+  // Accepts a proposal, locks the two books involved to 'reserved', and marks any
+  // other still-pending requests for the same book as 'unavailable' (book lock /
+  // double-booking prevention). Shared by the manual Accept action and the
+  // simulated auto-accept timeout so both paths stay consistent.
+  const acceptProposal = (proposalId) => {
+    const target = proposalsRef.current.find((p) => p.id === proposalId)
+    if (!target || target.status !== 'pending') return
+    const bookIdsToReserve = [target.requestedBookId, target.offeredBookId].filter(Boolean)
+
+    setProposals((prev) =>
+      prev.map((p) => {
+        if (p.id === proposalId) {
+          return {
+            ...p,
+            status: 'accepted',
+            chatMessages: [{ id: makeId('msg'), system: true, text: t('chatSystemAccepted'), createdAt: Date.now() }],
+          }
+        }
+        if (p.id !== proposalId && p.status === 'pending' && p.requestedBookId === target.requestedBookId) {
+          return { ...p, status: 'unavailable' }
+        }
+        return p
+      }),
+    )
+    if (bookIdsToReserve.length > 0) {
+      setBooks((prev) => prev.map((b) => (bookIdsToReserve.includes(b.id) ? { ...b, status: 'reserved' } : b)))
+    }
+  }
+
   const scheduleAutoAccept = (proposalId) => {
-    const timeoutId = setTimeout(() => {
-      setProposals((prev) =>
-        prev.map((p) =>
-          p.id === proposalId && p.status === 'pending'
-            ? {
-                ...p,
-                status: 'accepted',
-                chatMessages: [{ id: makeId('msg'), system: true, text: t('chatSystemAccepted'), createdAt: Date.now() }],
-              }
-            : p,
-        ),
-      )
-    }, 3000)
+    const timeoutId = setTimeout(() => acceptProposal(proposalId), 3000)
     timeoutsRef.current.push(timeoutId)
   }
 
@@ -323,17 +344,7 @@ export default function App() {
   }
 
   const handleAccept = (proposalId) => {
-    setProposals((prev) =>
-      prev.map((p) =>
-        p.id === proposalId
-          ? {
-              ...p,
-              status: 'accepted',
-              chatMessages: [{ id: makeId('msg'), system: true, text: t('chatSystemAccepted'), createdAt: Date.now() }],
-            }
-          : p,
-      ),
-    )
+    acceptProposal(proposalId)
     showToast(t('toastRequestAccepted'))
   }
 
@@ -342,13 +353,29 @@ export default function App() {
     showToast(t('toastRequestDeclined'))
   }
 
+  // Cancelling a still-pending request just closes it out; cancelling an
+  // already-accepted (reserved) swap releases both books back to 'available'.
   const handleCancelProposal = (proposalId) => {
+    const target = proposalsRef.current.find((p) => p.id === proposalId)
+    if (!target) return
+    const bookIdsToRelease = target.status === 'accepted' ? [target.requestedBookId, target.offeredBookId].filter(Boolean) : []
+
     setProposals((prev) => prev.map((p) => (p.id === proposalId ? { ...p, status: 'cancelled' } : p)))
+    if (bookIdsToRelease.length > 0) {
+      setBooks((prev) => prev.map((b) => (bookIdsToRelease.includes(b.id) ? { ...b, status: 'available' } : b)))
+    }
     showToast(t('toastRequestCancelled'))
   }
 
   const handleMarkCompleted = (proposalId) => {
+    const target = proposalsRef.current.find((p) => p.id === proposalId)
+    if (!target) return
+    const bookIdsToSwap = [target.requestedBookId, target.offeredBookId].filter(Boolean)
+
     setProposals((prev) => prev.map((p) => (p.id === proposalId ? { ...p, status: 'completed' } : p)))
+    if (bookIdsToSwap.length > 0) {
+      setBooks((prev) => prev.map((b) => (bookIdsToSwap.includes(b.id) ? { ...b, status: 'swapped' } : b)))
+    }
     showToast(t('toastRequestCompleted'))
   }
 

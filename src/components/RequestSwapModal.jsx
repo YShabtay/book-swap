@@ -10,6 +10,7 @@ export default function RequestSwapModal({ open, book, myBooks, onClose, onSubmi
   if (!open || !book) return null
 
   const title = lang === 'he' ? book.titleHe : book.titleEn
+  const offerableBooks = myBooks.filter((mb) => (mb.status || 'available') === 'available')
 
   const handleClose = () => {
     setOfferedBookId('')
@@ -67,12 +68,17 @@ export default function RequestSwapModal({ open, book, myBooks, onClose, onSubmi
               {t('proposalAddBookCta')}
             </button>
           </div>
+        ) : offerableBooks.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 p-8 text-center">
+            <h3 className="text-base font-bold text-slate-800">{t('proposalNoAvailableBooksTitle')}</h3>
+            <p className="text-sm text-slate-500">{t('proposalNoAvailableBooksSub')}</p>
+          </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-5">
             <div>
               <p className="mb-2 text-sm font-semibold text-slate-700">{t('proposalChooseBook')}</p>
               <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-                {myBooks.map((mb) => {
+                {offerableBooks.map((mb) => {
                   const mbTitle = lang === 'he' ? mb.titleHe : mb.titleEn
                   const selected = offeredBookId === mb.id
                   return (

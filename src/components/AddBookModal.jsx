@@ -88,6 +88,7 @@ export default function AddBookModal({ open, onClose, onSubmit, onLocationError 
       description: form.description.trim() || null,
       ownerId: user.id,
       ownerName: user.name,
+      status: 'available',
     }
     onSubmit(newBook)
     resetForm()

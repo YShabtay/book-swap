@@ -1,4 +1,4 @@
-import { MapPin, Sparkles, LocateFixed, Repeat, UserRound, Heart, BookOpen, Trash2, Pencil, CircleCheck } from 'lucide-react'
+import { MapPin, Sparkles, LocateFixed, Repeat, UserRound, Heart, BookOpen, Trash2, Pencil, CircleCheck, Clock, CheckCheck } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { categories, bookLanguages, conditions, getOwnerById, ownerLabel } from '../data/mockBooks.js'
@@ -67,6 +67,7 @@ export default function BookCard({
   const owner = book.ownerId.startsWith('owner-') ? getOwnerById(book.ownerId) : null
   const ownerName = owner ? ownerLabel(owner, lang) : book.ownerName
   const isMine = user && user.id === book.ownerId
+  const status = book.status || 'available'
 
   return (
     <div className="group animate-fade-in flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200/80">
@@ -134,24 +135,54 @@ export default function BookCard({
         {book.description && <p className="line-clamp-2 text-xs italic text-slate-400">{book.description}</p>}
 
         {isMine ? (
-          <div className="mt-1.5 flex gap-2">
-            <button
-              type="button"
-              onClick={() => onEditClick(book)}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2.5 text-sm font-semibold text-indigo-600 transition hover:border-indigo-300 hover:bg-indigo-100 active:scale-95"
-            >
-              <Pencil size={15} />
-              {t('editBook')}
-            </button>
-            <button
-              type="button"
-              onClick={() => onDeleteClick(book)}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm font-semibold text-rose-600 transition hover:border-rose-300 hover:bg-rose-100 active:scale-95"
-            >
-              <Trash2 size={15} />
-              {t('deleteBook')}
-            </button>
+          <div className="mt-1.5 flex flex-col gap-2">
+            {status !== 'available' && (
+              <span
+                className={`inline-flex w-fit items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold ${
+                  status === 'reserved' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-500'
+                }`}
+              >
+                {status === 'reserved' ? <Clock size={13} /> : <CheckCheck size={13} />}
+                {t(status === 'reserved' ? 'bookStatusReserved' : 'bookStatusSwapped')}
+              </span>
+            )}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => onEditClick(book)}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2.5 text-sm font-semibold text-indigo-600 transition hover:border-indigo-300 hover:bg-indigo-100 active:scale-95"
+              >
+                <Pencil size={15} />
+                {t('editBook')}
+              </button>
+              <button
+                type="button"
+                onClick={() => onDeleteClick(book)}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm font-semibold text-rose-600 transition hover:border-rose-300 hover:bg-rose-100 active:scale-95"
+              >
+                <Trash2 size={15} />
+                {t('deleteBook')}
+              </button>
+            </div>
           </div>
+        ) : status === 'reserved' ? (
+          <button
+            type="button"
+            disabled
+            className="mt-1.5 flex min-h-11 cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700"
+          >
+            <Clock size={16} />
+            {t('bookStatusReserved')}
+          </button>
+        ) : status === 'swapped' ? (
+          <button
+            type="button"
+            disabled
+            className="mt-1.5 flex min-h-11 cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-500"
+          >
+            <CheckCheck size={16} />
+            {t('bookStatusSwapped')}
+          </button>
         ) : isRequested ? (
           <button
             type="button"

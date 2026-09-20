@@ -41,7 +41,7 @@ export function ownerLabel(owner, lang) {
   return lang === 'he' ? owner.he : owner.en
 }
 
-export const initialBooks = [
+const rawInitialBooks = [
   {
     id: 'b1',
     titleEn: 'The Alchemist',
@@ -211,3 +211,6 @@ export const initialBooks = [
     ownerId: 'owner-tom',
   },
 ]
+
+// 'available' | 'reserved' (locked while a swap is accepted) | 'swapped' (completed)
+export const initialBooks = rawInitialBooks.map((book) => ({ status: 'available', ...book }))

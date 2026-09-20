@@ -12,6 +12,7 @@ const statusStyles = {
   declined: 'bg-rose-50 text-rose-700 ring-rose-600/20',
   cancelled: 'bg-slate-100 text-slate-500 ring-slate-400/20',
   completed: 'bg-teal-50 text-teal-700 ring-teal-600/20',
+  unavailable: 'bg-slate-100 text-slate-500 ring-slate-400/20',
 }
 
 const statusKeyByPerspective = {
@@ -21,6 +22,7 @@ const statusKeyByPerspective = {
     declined: 'statusDeclined',
     cancelled: 'statusCancelled',
     completed: 'statusCompleted',
+    unavailable: 'statusUnavailable',
   },
   outgoing: {
     pending: 'outgoingStatusPending',
@@ -28,6 +30,7 @@ const statusKeyByPerspective = {
     declined: 'outgoingStatusDeclined',
     cancelled: 'outgoingStatusCancelled',
     completed: 'outgoingStatusCompleted',
+    unavailable: 'outgoingStatusUnavailable',
   },
 }
 
@@ -69,7 +72,7 @@ export default function RequestsDrawer({ open, onClose, proposals, books, onAcce
   const history = proposals.filter(
     (p) =>
       (p.requestedBookOwnerId === user.id || p.offeredByUserId === user.id) &&
-      (p.status === 'declined' || p.status === 'cancelled' || p.status === 'completed'),
+      (p.status === 'declined' || p.status === 'cancelled' || p.status === 'completed' || p.status === 'unavailable'),
   )
 
   const listByTab = { incoming, outgoing, history }
@@ -231,6 +234,14 @@ export default function RequestsDrawer({ open, onClose, proposals, books, onAcce
                             >
                               <CircleCheck size={13} />
                               {t('markCompleted')}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => onCancel(p.id)}
+                              className="flex min-h-9 items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-rose-50 hover:text-rose-600"
+                            >
+                              <Ban size={13} />
+                              {t('cancelSwap')}
                             </button>
                           </>
                         )}
