@@ -141,21 +141,38 @@ export const translations = {
     proposalSubmit: 'Send Proposal',
 
     // Requests drawer
-    requestsTitle: 'Requests',
-    tabIncoming: 'Incoming',
-    tabSent: 'Sent',
+    requestsTitle: 'Requests Center',
+    tabIncoming: 'Incoming Requests',
+    tabOutgoing: 'Outgoing Requests',
+    tabHistory: 'History',
     requestsEmptyIncoming: 'No incoming requests yet.',
-    requestsEmptySent: "You haven't sent any proposals yet.",
+    requestsEmptyOutgoing: "You haven't sent any proposals yet.",
+    requestsEmptyHistory: 'No completed or closed requests yet.',
     requestedBookLabel: 'Wants',
     offeredBookLabel: 'Offers',
     noteLabel: 'Note',
     accept: 'Accept',
     decline: 'Decline',
+    cancelRequest: 'Cancel Request',
+    markCompleted: 'Mark as Completed',
+    openWhatsapp: 'Open WhatsApp Chat',
     statusPending: 'Pending',
     statusAccepted: 'Accepted',
     statusDeclined: 'Declined',
+    statusCancelled: 'Cancelled',
+    statusCompleted: 'Completed',
+    outgoingStatusPending: 'Awaiting Approval',
+    outgoingStatusAccepted: 'Approved - Ready to Coordinate',
+    outgoingStatusDeclined: 'Declined',
+    outgoingStatusCancelled: 'Cancelled',
+    outgoingStatusCompleted: 'Completed',
     openChat: 'Open Chat',
     withPerson: 'with {{name}}',
+    fromPerson: 'from {{name}}',
+    requestSentOn: 'Sent {{date}}',
+    ownerLabelInline: 'Owner: {{name}}',
+    locationLabelInline: 'Location: {{place}}',
+    whatsappGreeting: "Hi! Let's coordinate our book swap on BookSwap 📚",
 
     // Chat
     chatWith: 'Chat with {{name}}',
@@ -178,9 +195,16 @@ export const translations = {
 
     // Toasts
     toastBookAdded: 'Book added successfully!',
-    toastSwapSent: 'Swap request sent!',
+    toastSwapSent: 'Swap request sent successfully!',
     toastFavoriteAdded: 'Added to favorites',
     toastFavoriteRemoved: 'Removed from favorites',
+    toastRequestAccepted: 'Request accepted!',
+    toastRequestDeclined: 'Request declined.',
+    toastRequestCancelled: 'Request cancelled.',
+    toastRequestCompleted: 'Swap marked as completed!',
+
+    // Book card request state
+    requestedLabel: 'Requested',
 
     // Footer
     footerText: 'Built for travelers who love a good story.',
@@ -327,21 +351,38 @@ export const translations = {
     proposalSubmit: 'שלח הצעה',
 
     // Requests drawer
-    requestsTitle: 'בקשות',
-    tabIncoming: 'נכנסות',
-    tabSent: 'שנשלחו',
+    requestsTitle: 'מרכז בקשות',
+    tabIncoming: 'בקשות שהתקבלו',
+    tabOutgoing: 'בקשות ששלחתי',
+    tabHistory: 'היסטוריית החלפות',
     requestsEmptyIncoming: 'אין עדיין בקשות נכנסות.',
-    requestsEmptySent: 'עדיין לא שלחתם הצעות.',
+    requestsEmptyOutgoing: 'עדיין לא שלחתם הצעות.',
+    requestsEmptyHistory: 'אין עדיין בקשות שהושלמו או נסגרו.',
     requestedBookLabel: 'מבקש/ת',
     offeredBookLabel: 'מציע/ה',
     noteLabel: 'הערה',
-    accept: 'אשר',
+    accept: 'אשר בקשה',
     decline: 'דחה',
+    cancelRequest: 'בטל בקשה',
+    markCompleted: 'סמן כהושלם',
+    openWhatsapp: 'פתח שיחה בוואטסאפ',
     statusPending: 'ממתין',
     statusAccepted: 'אושר',
     statusDeclined: 'נדחה',
+    statusCancelled: 'בוטלה',
+    statusCompleted: 'הושלמה בהצלחה',
+    outgoingStatusPending: 'ממתין לאישור',
+    outgoingStatusAccepted: 'אושר - ניתן לתאם',
+    outgoingStatusDeclined: 'נדחה',
+    outgoingStatusCancelled: 'בוטלה',
+    outgoingStatusCompleted: 'הושלמה בהצלחה',
     openChat: 'פתח צ\'אט',
     withPerson: 'עם {{name}}',
+    fromPerson: 'מאת {{name}}',
+    requestSentOn: 'נשלח {{date}}',
+    ownerLabelInline: 'בעלים: {{name}}',
+    locationLabelInline: 'מיקום: {{place}}',
+    whatsappGreeting: 'היי! בואו נתאם את החלפת הספרים דרך BookSwap 📚',
 
     // Chat
     chatWith: 'צ\'אט עם {{name}}',
@@ -364,9 +405,16 @@ export const translations = {
 
     // Toasts
     toastBookAdded: 'הספר נוסף בהצלחה!',
-    toastSwapSent: 'הצעת ההחלפה נשלחה!',
+    toastSwapSent: 'הבקשה נשלחה בהצלחה!',
     toastFavoriteAdded: 'הספר נוסף למועדפים',
     toastFavoriteRemoved: 'הוסר מהמועדפים',
+    toastRequestAccepted: 'הבקשה אושרה!',
+    toastRequestDeclined: 'הבקשה נדחתה.',
+    toastRequestCancelled: 'הבקשה בוטלה.',
+    toastRequestCompleted: 'ההחלפה סומנה כהושלמה!',
+
+    // Book card request state
+    requestedLabel: 'נשלחה בקשה',
 
     // Footer
     footerText: 'נבנה בשביל מטיילים שאוהבים סיפור טוב.',

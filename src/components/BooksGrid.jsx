@@ -13,6 +13,7 @@ export default function BooksGrid({
   onExpandRadius,
   isFavorite,
   onToggleFavorite,
+  isRequested,
 }) {
   const { t } = useLanguage()
 
@@ -58,6 +59,7 @@ export default function BooksGrid({
             onDeleteClick={onDeleteClick}
             isFavorite={isFavorite(book.id)}
             onToggleFavorite={onToggleFavorite}
+            isRequested={isRequested(book.id)}
           />
         ))}
       </div>

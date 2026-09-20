@@ -22,13 +22,14 @@ export const conditions = [
 ]
 
 // Fictional owners for the seed listings, so requests/chat have someone on the other end.
+// `phone` is a mock WhatsApp-ready number (country code + digits, no leading +).
 export const ownerProfiles = [
-  { id: 'owner-maya', en: 'Maya', he: 'מאיה' },
-  { id: 'owner-jonas', en: 'Jonas', he: 'יונאס' },
-  { id: 'owner-noa', en: 'Noa', he: 'נועה' },
-  { id: 'owner-liam', en: 'Liam', he: 'ליאם' },
-  { id: 'owner-sasha', en: 'Sasha', he: 'סשה' },
-  { id: 'owner-tom', en: 'Tom', he: 'תום' },
+  { id: 'owner-maya', en: 'Maya', he: 'מאיה', phone: '972501112222' },
+  { id: 'owner-jonas', en: 'Jonas', he: 'יונאס', phone: '972502223333' },
+  { id: 'owner-noa', en: 'Noa', he: 'נועה', phone: '972503334444' },
+  { id: 'owner-liam', en: 'Liam', he: 'ליאם', phone: '972504445555' },
+  { id: 'owner-sasha', en: 'Sasha', he: 'סשה', phone: '972505556666' },
+  { id: 'owner-tom', en: 'Tom', he: 'תום', phone: '972506667777' },
 ]
 
 export function getOwnerById(id) {

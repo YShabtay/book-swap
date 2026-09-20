@@ -25,6 +25,7 @@ import { simulatedOpeningNotes, chatCannedReplies, pickRandom } from './data/cha
 
 const emptyFilters = { search: '', location: '', category: '', language: '', radius: 'any' }
 const BOOKS_STORAGE_KEY = 'bookswap-books'
+const PROPOSALS_STORAGE_KEY = 'bookswap-proposals'
 
 function loadBooks() {
   try {
@@ -32,6 +33,15 @@ function loadBooks() {
     return raw ? JSON.parse(raw) : initialBooks
   } catch {
     return initialBooks
+  }
+}
+
+function loadProposals() {
+  try {
+    const raw = localStorage.getItem(PROPOSALS_STORAGE_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
   }
 }
 
@@ -58,7 +68,7 @@ export default function App() {
   const [isSwapModalOpen, setSwapModalOpen] = useState(false)
 
   const [isRequestsOpen, setRequestsOpen] = useState(false)
-  const [proposals, setProposals] = useState([])
+  const [proposals, setProposals] = useState(loadProposals)
   const [chatProposalId, setChatProposalId] = useState(null)
   const [isChatOpen, setChatOpen] = useState(false)
 
@@ -84,6 +94,13 @@ export default function App() {
       // ignore storage errors
     }
   }, [books])
+  useEffect(() => {
+    try {
+      localStorage.setItem(PROPOSALS_STORAGE_KEY, JSON.stringify(proposals))
+    } catch {
+      // ignore storage errors
+    }
+  }, [proposals])
   useEffect(() => {
     userRef.current = user
   }, [user])
@@ -188,6 +205,8 @@ export default function App() {
 
   const handleRequestSwapClick = (book) => {
     if (user) {
+      const alreadyRequested = proposals.some((p) => p.requestedBookId === book.id && p.offeredByUserId === user.id)
+      if (alreadyRequested) return
       setSwapTarget(book)
       setSwapModalOpen(true)
     } else {
@@ -315,10 +334,22 @@ export default function App() {
           : p,
       ),
     )
+    showToast(t('toastRequestAccepted'))
   }
 
   const handleDecline = (proposalId) => {
     setProposals((prev) => prev.map((p) => (p.id === proposalId ? { ...p, status: 'declined' } : p)))
+    showToast(t('toastRequestDeclined'))
+  }
+
+  const handleCancelProposal = (proposalId) => {
+    setProposals((prev) => prev.map((p) => (p.id === proposalId ? { ...p, status: 'cancelled' } : p)))
+    showToast(t('toastRequestCancelled'))
+  }
+
+  const handleMarkCompleted = (proposalId) => {
+    setProposals((prev) => prev.map((p) => (p.id === proposalId ? { ...p, status: 'completed' } : p)))
+    showToast(t('toastRequestCompleted'))
   }
 
   const handleOpenChat = (proposalId) => {
@@ -373,6 +404,9 @@ export default function App() {
     setFilters((prev) => ({ ...prev, radius: nextKm ? nextKm * 1000 : 'any' }))
   }
 
+  const isBookRequestedByMe = (bookId) =>
+    !!user && proposals.some((p) => p.requestedBookId === bookId && p.offeredByUserId === user.id)
+
   const myBooks = user ? books.filter((b) => b.ownerId === user.id) : []
   const pendingRequestsCount = user ? proposals.filter((p) => p.requestedBookOwnerId === user.id && p.status === 'pending').length : 0
   const activeChatProposal = proposals.find((p) => p.id === chatProposalId) || null
@@ -411,6 +445,7 @@ export default function App() {
         onExpandRadius={handleExpandRadius}
         isFavorite={isFavorite}
         onToggleFavorite={handleToggleFavorite}
+        isRequested={isBookRequestedByMe}
       />
 
       <footer className="border-t border-slate-200 bg-white py-6 text-center text-sm text-slate-400">
@@ -457,6 +492,8 @@ export default function App() {
           books={books}
           onAccept={handleAccept}
           onDecline={handleDecline}
+          onCancel={handleCancelProposal}
+          onComplete={handleMarkCompleted}
           onOpenChat={handleOpenChat}
         />
       )}

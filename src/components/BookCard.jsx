@@ -1,4 +1,4 @@
-import { MapPin, Sparkles, LocateFixed, Repeat, UserRound, Heart, BookOpen, Trash2, Pencil } from 'lucide-react'
+import { MapPin, Sparkles, LocateFixed, Repeat, UserRound, Heart, BookOpen, Trash2, Pencil, CircleCheck } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { categories, bookLanguages, conditions, getOwnerById, ownerLabel } from '../data/mockBooks.js'
@@ -43,7 +43,15 @@ function FallbackCover({ id, title, author }) {
   )
 }
 
-export default function BookCard({ book, onRequestSwap, onEditClick, onDeleteClick, isFavorite, onToggleFavorite }) {
+export default function BookCard({
+  book,
+  onRequestSwap,
+  onEditClick,
+  onDeleteClick,
+  isFavorite,
+  onToggleFavorite,
+  isRequested,
+}) {
   const { t, lang, isRtl } = useLanguage()
   const { user } = useAuth()
 
@@ -144,11 +152,20 @@ export default function BookCard({ book, onRequestSwap, onEditClick, onDeleteCli
               {t('deleteBook')}
             </button>
           </div>
+        ) : isRequested ? (
+          <button
+            type="button"
+            disabled
+            className="mt-1.5 flex min-h-11 cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-600"
+          >
+            <CircleCheck size={16} />
+            {t('requestedLabel')}
+          </button>
         ) : (
           <button
             type="button"
             onClick={() => onRequestSwap(book)}
-            className="mt-1.5 flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-700 active:scale-95"
+            className="mt-1.5 flex min-h-11 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-700 active:scale-95"
           >
             <Repeat size={16} />
             {t('requestSwap')}
