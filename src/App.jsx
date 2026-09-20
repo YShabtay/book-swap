@@ -223,7 +223,9 @@ export default function App() {
         setLockedSwapWarningOpen(true)
         return
       }
-      const alreadyRequested = proposals.some((p) => p.requestedBookId === book.id && p.offeredByUserId === user.id)
+      const alreadyRequested = proposals.some(
+        (p) => p.requestedBookId === book.id && p.offeredByUserId === user.id && p.status === 'pending',
+      )
       if (alreadyRequested) return
       setSwapTarget(book)
       setSwapModalOpen(true)
@@ -311,9 +313,9 @@ export default function App() {
   // --- Swap proposals --------------------------------------------------------
 
   // Accepts a proposal, locks the two books involved to 'reserved' (which also
-  // pulls them out of the public catalog — see filteredBooks), and marks any
-  // other still-pending requests referencing EITHER book as 'unavailable': other
-  // people wanting the same requested book, and any other proposal where this
+  // pulls them out of the public catalog — see filteredBooks), and auto-cancels
+  // any other still-pending request referencing EITHER book: other people
+  // wanting the same requested book, and any other proposal where this
   // requester had offered the same book elsewhere. Shared by the manual Accept
   // action and the simulated auto-accept timeout so both paths stay consistent.
   const acceptProposal = (proposalId) => {
@@ -335,7 +337,7 @@ export default function App() {
           p.status === 'pending' &&
           (lockedBookIds.includes(p.requestedBookId) || lockedBookIds.includes(p.offeredBookId))
         ) {
-          return { ...p, status: 'unavailable' }
+          return { ...p, status: 'cancelled', cancelReasonKey: 'reasonBookSwappedElsewhere' }
         }
         return p
       }),
@@ -406,6 +408,10 @@ export default function App() {
     showToast(t('toastRequestCompleted'))
   }
 
+  const handleDismissProposal = (proposalId) => {
+    setProposals((prev) => prev.filter((p) => p.id !== proposalId))
+  }
+
   const handleOpenChat = (proposalId) => {
     setChatProposalId(proposalId)
     setChatOpen(true)
@@ -458,8 +464,11 @@ export default function App() {
     setFilters((prev) => ({ ...prev, radius: nextKm ? nextKm * 1000 : 'any' }))
   }
 
+  // Only an ACTIVE pending request should lock the "Request Swap" button — once a
+  // request is declined/cancelled (e.g. auto-cancelled because the book got
+  // swapped elsewhere), the button must revert so the user can try again.
   const isBookRequestedByMe = (bookId) =>
-    !!user && proposals.some((p) => p.requestedBookId === bookId && p.offeredByUserId === user.id)
+    !!user && proposals.some((p) => p.requestedBookId === bookId && p.offeredByUserId === user.id && p.status === 'pending')
 
   const myBooks = user ? books.filter((b) => b.ownerId === user.id) : []
   const incomingPendingCount = user ? proposals.filter((p) => p.requestedBookOwnerId === user.id && p.status === 'pending').length : 0
@@ -574,6 +583,7 @@ export default function App() {
           onCancel={handleCancelProposal}
           onComplete={handleMarkCompleted}
           onOpenChat={handleOpenChat}
+          onDismiss={handleDismissProposal}
         />
       )}
 

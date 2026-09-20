@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, Inbox, Check, XIcon, MessageSquare, MessageCircle, CircleCheck, Ban, BookOpen, ShieldCheck } from 'lucide-react'
+import { X, Inbox, Check, XIcon, MessageSquare, MessageCircle, CircleCheck, Ban, BookOpen, ShieldCheck, Trash2 } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { resolveUserName, isValidPhone, buildWhatsappLink } from '../utils/people.js'
@@ -12,7 +12,6 @@ const statusStyles = {
   declined: 'bg-rose-50 text-rose-700 ring-rose-600/20',
   cancelled: 'bg-slate-100 text-slate-500 ring-slate-400/20',
   completed: 'bg-teal-50 text-teal-700 ring-teal-600/20',
-  unavailable: 'bg-slate-100 text-slate-500 ring-slate-400/20',
 }
 
 const statusKeyByPerspective = {
@@ -22,7 +21,6 @@ const statusKeyByPerspective = {
     declined: 'statusDeclined',
     cancelled: 'statusCancelled',
     completed: 'statusCompleted',
-    unavailable: 'statusUnavailable',
   },
   outgoing: {
     pending: 'outgoingStatusPending',
@@ -30,7 +28,6 @@ const statusKeyByPerspective = {
     declined: 'outgoingStatusDeclined',
     cancelled: 'outgoingStatusCancelled',
     completed: 'outgoingStatusCompleted',
-    unavailable: 'outgoingStatusUnavailable',
   },
 }
 
@@ -53,7 +50,7 @@ function BookChip({ book, lang }) {
 
 const TABS = ['incoming', 'outgoing', 'history']
 
-export default function RequestsDrawer({ open, onClose, proposals, books, onAccept, onDecline, onCancel, onComplete, onOpenChat }) {
+export default function RequestsDrawer({ open, onClose, proposals, books, onAccept, onDecline, onCancel, onComplete, onOpenChat, onDismiss }) {
   const { t, lang } = useLanguage()
   const { user, getPublicUserById } = useAuth()
   const [tab, setTab] = useState('incoming')
@@ -72,7 +69,7 @@ export default function RequestsDrawer({ open, onClose, proposals, books, onAcce
   const history = proposals.filter(
     (p) =>
       (p.requestedBookOwnerId === user.id || p.offeredByUserId === user.id) &&
-      (p.status === 'declined' || p.status === 'cancelled' || p.status === 'completed' || p.status === 'unavailable'),
+      (p.status === 'declined' || p.status === 'cancelled' || p.status === 'completed'),
   )
 
   const listByTab = { incoming, outgoing, history }
@@ -175,6 +172,23 @@ export default function RequestsDrawer({ open, onClose, proposals, books, onAcce
                     </div>
 
                     {p.note && <p className="mt-2.5 rounded-lg bg-slate-50 px-2.5 py-2 text-xs text-slate-600">{p.note}</p>}
+
+                    {p.cancelReasonKey && (
+                      <p className="mt-2.5 rounded-lg bg-slate-50 px-2.5 py-2 text-xs text-slate-500">{t(p.cancelReasonKey)}</p>
+                    )}
+
+                    {tab === 'history' && (
+                      <div className="mt-3 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => onDismiss(p.id)}
+                          className="flex min-h-9 items-center gap-1 rounded-lg border border-transparent px-3 py-1.5 text-xs font-medium text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
+                        >
+                          <Trash2 size={13} />
+                          {t('dismissRequest')}
+                        </button>
+                      </div>
+                    )}
 
                     {tab !== 'history' && (
                       <div className="mt-3 flex flex-wrap justify-end gap-2">
