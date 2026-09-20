@@ -1,4 +1,4 @@
-import { MapPin, Sparkles, LocateFixed, Repeat, UserRound, Heart, BookOpen, Trash2, Pencil, CircleCheck, Clock, CheckCheck } from 'lucide-react'
+import { MapPin, Sparkles, LocateFixed, Repeat, UserRound, Heart, BookOpen, Trash2, Pencil, CircleCheck, Clock, CheckCheck, AlertCircle } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { categories, bookLanguages, conditions, getOwnerById, ownerLabel } from '../data/mockBooks.js'
@@ -168,11 +168,11 @@ export default function BookCard({
         ) : status === 'reserved' ? (
           <button
             type="button"
-            disabled
-            className="mt-1.5 flex min-h-11 cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700"
+            onClick={() => onRequestSwap(book)}
+            className="mt-1.5 flex min-h-11 items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700 transition hover:border-amber-300 hover:bg-amber-100 active:scale-95"
           >
-            <Clock size={16} />
-            {t('bookStatusReserved')}
+            <AlertCircle size={16} />
+            {t('bookLockedAction')}
           </button>
         ) : status === 'swapped' ? (
           <button

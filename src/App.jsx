@@ -10,6 +10,7 @@ import ChatDrawer from './components/ChatDrawer.jsx'
 import ToastContainer from './components/ToastContainer.jsx'
 import DeleteBookModal from './components/DeleteBookModal.jsx'
 import EditBookModal from './components/EditBookModal.jsx'
+import LockedSwapModal from './components/LockedSwapModal.jsx'
 import { useLanguage } from './context/LanguageContext.jsx'
 import { useAuth } from './context/AuthContext.jsx'
 import { useGeolocation } from './hooks/useGeolocation.js'
@@ -68,6 +69,7 @@ export default function App() {
   const [isSwapModalOpen, setSwapModalOpen] = useState(false)
 
   const [isRequestsOpen, setRequestsOpen] = useState(false)
+  const [isLockedSwapWarningOpen, setLockedSwapWarningOpen] = useState(false)
   const [proposals, setProposals] = useState(loadProposals)
   const [chatProposalId, setChatProposalId] = useState(null)
   const [isChatOpen, setChatOpen] = useState(false)
@@ -119,6 +121,7 @@ export default function App() {
       setAddBookOpen(false)
       setDeleteTarget(null)
       setEditTarget(null)
+      setLockedSwapWarningOpen(false)
     }
   }, [user])
 
@@ -208,7 +211,10 @@ export default function App() {
   const handleRequestSwapClick = (book) => {
     if (user) {
       const status = book.status || 'available'
-      if (status !== 'available') return
+      if (status !== 'available') {
+        setLockedSwapWarningOpen(true)
+        return
+      }
       const alreadyRequested = proposals.some((p) => p.requestedBookId === book.id && p.offeredByUserId === user.id)
       if (alreadyRequested) return
       setSwapTarget(book)
@@ -218,6 +224,17 @@ export default function App() {
       setAuthHintKey('authHintRequestSwap')
       setAuthOpen(true)
     }
+  }
+
+  const handleLockedBookOfferAttempt = () => {
+    setLockedSwapWarningOpen(true)
+  }
+
+  const handleOpenRequestsFromWarning = () => {
+    setLockedSwapWarningOpen(false)
+    setSwapModalOpen(false)
+    setSwapTarget(null)
+    setRequestsOpen(true)
   }
 
   const handleAuthSuccess = () => {
@@ -518,6 +535,13 @@ export default function App() {
           setSwapModalOpen(false)
           setAddBookOpen(true)
         }}
+        onLockedBookClick={handleLockedBookOfferAttempt}
+      />
+
+      <LockedSwapModal
+        open={isLockedSwapWarningOpen}
+        onClose={() => setLockedSwapWarningOpen(false)}
+        onOpenRequests={handleOpenRequestsFromWarning}
       />
 
       {user && (

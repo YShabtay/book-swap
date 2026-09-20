@@ -74,6 +74,15 @@ export const translations = {
     requestSwap: 'Request Swap',
     bookStatusReserved: 'Swap in Progress',
     bookStatusSwapped: 'Already Swapped',
+    bookLockedAction: 'In Approved Swap',
+
+    // Locked swap warning modal
+    lockedSwapTitle: 'Book in Active Swap',
+    lockedSwapBody:
+      "You can't send a new request for this book because a swap has already been approved with another user. If you'd like to edit or cancel that swap, reach out via chat/WhatsApp to the user you approved with, or update the status in the Requests Center.",
+    lockedSwapOpenRequests: 'Open Requests Center',
+    lockedSwapClose: 'Got it, close',
+
     deleteBook: 'Delete Book',
     deleteConfirmTitle: 'Delete this book?',
     deleteConfirmBody: 'This will remove "{{title}}" from the listing.',
@@ -136,8 +145,6 @@ export const translations = {
     proposalSubtitle: 'Pick one of your books to offer for "{{title}}".',
     proposalNoBooksTitle: "You haven't added any books yet",
     proposalNoBooksSub: 'Add a book first so you have something to offer in exchange.',
-    proposalNoAvailableBooksTitle: 'No available books to offer',
-    proposalNoAvailableBooksSub: 'All your books are currently reserved or already swapped.',
     proposalAddBookCta: 'Add a Book',
     proposalChooseBook: 'Choose a book to offer',
     proposalNoteLabel: 'Add a note (optional)',
@@ -295,6 +302,15 @@ export const translations = {
     requestSwap: 'בקש החלפה',
     bookStatusReserved: 'בהליך החלפה',
     bookStatusSwapped: 'הוחלף בהצלחה',
+    bookLockedAction: 'בהחלפה מאושרת',
+
+    // Locked swap warning modal
+    lockedSwapTitle: 'הספר כבר נמצא בהליך החלפה מאושר',
+    lockedSwapBody:
+      'לא ניתן לשלוח בקשה חדשה עבור ספר זה מכיוון שכבר אושרה עבורו החלפה מול משתמש אחר. אם תרצה לערוך או לבטל את ההחלפה, יש לפנות לצ\'אט/וואטסאפ מול המשתמש שאישרת מולו, או לעדכן את הסטטוס במרכז הבקשות.',
+    lockedSwapOpenRequests: 'פתח את מרכז הבקשות',
+    lockedSwapClose: 'הבנתי, סגור',
+
     deleteBook: 'מחק ספר',
     deleteConfirmTitle: 'האם למחוק את הספר?',
     deleteConfirmBody: 'הפעולה תסיר את "{{title}}" מהרשימה.',
@@ -357,8 +373,6 @@ export const translations = {
     proposalSubtitle: 'בחרו אחד מהספרים שלכם להציע עבור "{{title}}".',
     proposalNoBooksTitle: 'עדיין לא הוספתם ספרים',
     proposalNoBooksSub: 'הוסיפו ספר קודם כדי שיהיה לכם מה להציע בתמורה.',
-    proposalNoAvailableBooksTitle: 'אין ספרים זמינים להצעה',
-    proposalNoAvailableBooksSub: 'כל הספרים שלכם נמצאים כרגע בהליך החלפה או שכבר הוחלפו.',
     proposalAddBookCta: 'הוסף ספר',
     proposalChooseBook: 'בחרו ספר להציע',
     proposalNoteLabel: 'הוסיפו הערה (אופציונלי)',

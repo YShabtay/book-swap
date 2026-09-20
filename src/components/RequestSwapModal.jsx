@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { X, Repeat, BookPlus, Check } from 'lucide-react'
+import { X, Repeat, BookPlus, Check, Lock } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext.jsx'
 
-export default function RequestSwapModal({ open, book, myBooks, onClose, onSubmit, onAddBookCta }) {
+export default function RequestSwapModal({ open, book, myBooks, onClose, onSubmit, onAddBookCta, onLockedBookClick }) {
   const { t, lang } = useLanguage()
   const [offeredBookId, setOfferedBookId] = useState('')
   const [note, setNote] = useState('')
@@ -10,7 +10,6 @@ export default function RequestSwapModal({ open, book, myBooks, onClose, onSubmi
   if (!open || !book) return null
 
   const title = lang === 'he' ? book.titleHe : book.titleEn
-  const offerableBooks = myBooks.filter((mb) => (mb.status || 'available') === 'available')
 
   const handleClose = () => {
     setOfferedBookId('')
@@ -68,35 +67,41 @@ export default function RequestSwapModal({ open, book, myBooks, onClose, onSubmi
               {t('proposalAddBookCta')}
             </button>
           </div>
-        ) : offerableBooks.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 p-8 text-center">
-            <h3 className="text-base font-bold text-slate-800">{t('proposalNoAvailableBooksTitle')}</h3>
-            <p className="text-sm text-slate-500">{t('proposalNoAvailableBooksSub')}</p>
-          </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-5">
             <div>
               <p className="mb-2 text-sm font-semibold text-slate-700">{t('proposalChooseBook')}</p>
               <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-                {offerableBooks.map((mb) => {
+                {myBooks.map((mb) => {
                   const mbTitle = lang === 'he' ? mb.titleHe : mb.titleEn
                   const selected = offeredBookId === mb.id
+                  const isLocked = (mb.status || 'available') !== 'available'
                   return (
                     <button
                       key={mb.id}
                       type="button"
-                      onClick={() => setOfferedBookId(mb.id)}
+                      onClick={() => (isLocked ? onLockedBookClick?.(mb) : setOfferedBookId(mb.id))}
                       className={`relative overflow-hidden rounded-xl border-2 text-start transition ${
-                        selected ? 'border-indigo-500 ring-2 ring-indigo-100' : 'border-slate-200 hover:border-indigo-300'
+                        isLocked
+                          ? 'border-slate-200 opacity-60'
+                          : selected
+                            ? 'border-indigo-500 ring-2 ring-indigo-100'
+                            : 'border-slate-200 hover:border-indigo-300'
                       }`}
                     >
                       <div className="aspect-[3/4] w-full overflow-hidden bg-slate-100">
                         <img src={mb.cover} alt={mbTitle} className="h-full w-full object-cover" />
                       </div>
-                      {selected && (
-                        <span className="absolute end-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-white">
-                          <Check size={12} />
+                      {isLocked ? (
+                        <span className="absolute end-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-white">
+                          <Lock size={11} />
                         </span>
+                      ) : (
+                        selected && (
+                          <span className="absolute end-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-white">
+                            <Check size={12} />
+                          </span>
+                        )
                       )}
                       <p className="line-clamp-2 px-1.5 py-1.5 text-xs font-semibold text-slate-700">{mbTitle}</p>
                     </button>
