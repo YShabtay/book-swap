@@ -2,6 +2,25 @@ import { BookOpen, Languages, Plus, LogIn, LogOut, Inbox, BookMarked, Heart } fr
 import { useLanguage } from '../context/LanguageContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 
+const dotColorClasses = {
+  green: 'bg-emerald-500',
+  orange: 'bg-amber-500',
+}
+
+function RequestsStatusDot({ color, count }) {
+  const colorClass = dotColorClasses[color]
+  return (
+    <span className="absolute -end-1 -top-1 flex h-4.5 min-w-4.5">
+      <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${colorClass}`} />
+      <span
+        className={`relative inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white ring-2 ring-white ${colorClass}`}
+      >
+        {count}
+      </span>
+    </span>
+  )
+}
+
 export default function Header({
   onLogoClick,
   onAddBook,
@@ -11,7 +30,7 @@ export default function Header({
   onToggleFavorites,
   isMineView,
   isFavoritesView,
-  pendingRequestsCount,
+  requestsNotification,
 }) {
   const { t, toggleLang } = useLanguage()
   const { user, logout } = useAuth()
@@ -78,14 +97,13 @@ export default function Header({
               <button
                 type="button"
                 onClick={onOpenRequests}
+                title={requestsNotification ? t(requestsNotification.tooltipKey) : undefined}
                 className="relative flex min-h-11 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600 active:scale-95 sm:px-3"
               >
                 <Inbox size={16} />
                 <span className="hidden sm:inline">{t('requests')}</span>
-                {pendingRequestsCount > 0 && (
-                  <span className="absolute -end-1 -top-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
-                    {pendingRequestsCount}
-                  </span>
+                {requestsNotification && (
+                  <RequestsStatusDot color={requestsNotification.color} count={requestsNotification.count} />
                 )}
               </button>
             </>

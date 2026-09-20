@@ -408,7 +408,16 @@ export default function App() {
     !!user && proposals.some((p) => p.requestedBookId === bookId && p.offeredByUserId === user.id)
 
   const myBooks = user ? books.filter((b) => b.ownerId === user.id) : []
-  const pendingRequestsCount = user ? proposals.filter((p) => p.requestedBookOwnerId === user.id && p.status === 'pending').length : 0
+  const incomingPendingCount = user ? proposals.filter((p) => p.requestedBookOwnerId === user.id && p.status === 'pending').length : 0
+  const outgoingPendingCount = user ? proposals.filter((p) => p.offeredByUserId === user.id && p.status === 'pending').length : 0
+  const outgoingApprovedCount = user ? proposals.filter((p) => p.offeredByUserId === user.id && p.status === 'accepted').length : 0
+  const pendingRequestsCount = incomingPendingCount + outgoingPendingCount
+  const requestsNotification =
+    outgoingApprovedCount > 0
+      ? { color: 'green', count: outgoingApprovedCount + pendingRequestsCount, tooltipKey: 'requestsDotTooltipApproved' }
+      : pendingRequestsCount > 0
+        ? { color: 'orange', count: pendingRequestsCount, tooltipKey: 'requestsDotTooltipPending' }
+        : null
   const activeChatProposal = proposals.find((p) => p.id === chatProposalId) || null
 
   return (
@@ -425,7 +434,7 @@ export default function App() {
         onToggleFavorites={() => setIsFavoritesView((v) => !v)}
         isMineView={isMineView}
         isFavoritesView={isFavoritesView}
-        pendingRequestsCount={pendingRequestsCount}
+        requestsNotification={requestsNotification}
       />
       <SearchFilterBar
         filters={filters}

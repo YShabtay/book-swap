@@ -140,6 +140,10 @@ export const translations = {
     proposalNotePh: 'Say hello, suggest a meeting spot...',
     proposalSubmit: 'Send Proposal',
 
+    // Requests header status dot
+    requestsDotTooltipPending: 'Pending requests',
+    requestsDotTooltipApproved: 'Request approved!',
+
     // Requests drawer
     requestsTitle: 'Requests Center',
     tabIncoming: 'Incoming Requests',
@@ -351,6 +355,10 @@ export const translations = {
     proposalSubmit: 'שלח הצעה',
 
     // Requests drawer
+    // Requests header status dot
+    requestsDotTooltipPending: 'בקשות ממתינות',
+    requestsDotTooltipApproved: 'בקשה אושרה!',
+
     requestsTitle: 'מרכז בקשות',
     tabIncoming: 'בקשות שהתקבלו',
     tabOutgoing: 'בקשות ששלחתי',
