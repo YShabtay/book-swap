@@ -11,6 +11,7 @@ import ToastContainer from './components/ToastContainer.jsx'
 import DeleteBookModal from './components/DeleteBookModal.jsx'
 import EditBookModal from './components/EditBookModal.jsx'
 import LockedSwapModal from './components/LockedSwapModal.jsx'
+import ProfileModal from './components/ProfileModal.jsx'
 import { useLanguage } from './context/LanguageContext.jsx'
 import { useAuth } from './context/AuthContext.jsx'
 import { useGeolocation } from './hooks/useGeolocation.js'
@@ -70,6 +71,7 @@ export default function App() {
 
   const [isRequestsOpen, setRequestsOpen] = useState(false)
   const [isLockedSwapWarningOpen, setLockedSwapWarningOpen] = useState(false)
+  const [isProfileOpen, setProfileOpen] = useState(false)
   const [proposals, setProposals] = useState(loadProposals)
   const [chatProposalId, setChatProposalId] = useState(null)
   const [isChatOpen, setChatOpen] = useState(false)
@@ -122,6 +124,7 @@ export default function App() {
       setDeleteTarget(null)
       setEditTarget(null)
       setLockedSwapWarningOpen(false)
+      setProfileOpen(false)
     }
   }, [user])
 
@@ -166,7 +169,12 @@ export default function App() {
       const matchesLanguage = !filters.language || book.language === filters.language
       const matchesMine = !isMineView || (user && book.ownerId === user.id)
       const matchesFavorites = !isFavoritesView || isFavorite(book.id)
-      return matchesQuery && matchesLocation && matchesCategory && matchesLanguage && matchesMine && matchesFavorites
+      // Books already reserved or swapped are pulled from the public catalog — only
+      // their owner keeps seeing them (in "My Books", with a status badge).
+      const matchesAvailability = isMineView || (book.status || 'available') === 'available'
+      return (
+        matchesQuery && matchesLocation && matchesCategory && matchesLanguage && matchesMine && matchesFavorites && matchesAvailability
+      )
     })
 
     if (referenceCoords) {
@@ -306,14 +314,16 @@ export default function App() {
 
   // --- Swap proposals --------------------------------------------------------
 
-  // Accepts a proposal, locks the two books involved to 'reserved', and marks any
-  // other still-pending requests for the same book as 'unavailable' (book lock /
-  // double-booking prevention). Shared by the manual Accept action and the
-  // simulated auto-accept timeout so both paths stay consistent.
+  // Accepts a proposal, locks the two books involved to 'reserved' (which also
+  // pulls them out of the public catalog — see filteredBooks), and marks any
+  // other still-pending requests referencing EITHER book as 'unavailable': other
+  // people wanting the same requested book, and any other proposal where this
+  // requester had offered the same book elsewhere. Shared by the manual Accept
+  // action and the simulated auto-accept timeout so both paths stay consistent.
   const acceptProposal = (proposalId) => {
     const target = proposalsRef.current.find((p) => p.id === proposalId)
     if (!target || target.status !== 'pending') return
-    const bookIdsToReserve = [target.requestedBookId, target.offeredBookId].filter(Boolean)
+    const lockedBookIds = [target.requestedBookId, target.offeredBookId].filter(Boolean)
 
     setProposals((prev) =>
       prev.map((p) => {
@@ -324,14 +334,18 @@ export default function App() {
             chatMessages: [{ id: makeId('msg'), system: true, text: t('chatSystemAccepted'), createdAt: Date.now() }],
           }
         }
-        if (p.id !== proposalId && p.status === 'pending' && p.requestedBookId === target.requestedBookId) {
+        if (
+          p.id !== proposalId &&
+          p.status === 'pending' &&
+          (lockedBookIds.includes(p.requestedBookId) || lockedBookIds.includes(p.offeredBookId))
+        ) {
           return { ...p, status: 'unavailable' }
         }
         return p
       }),
     )
-    if (bookIdsToReserve.length > 0) {
-      setBooks((prev) => prev.map((b) => (bookIdsToReserve.includes(b.id) ? { ...b, status: 'reserved' } : b)))
+    if (lockedBookIds.length > 0) {
+      setBooks((prev) => prev.map((b) => (lockedBookIds.includes(b.id) ? { ...b, status: 'reserved' } : b)))
     }
   }
 
@@ -476,6 +490,7 @@ export default function App() {
         onToggleMyBooks={() => setIsMineView((v) => !v)}
         onOpenRequests={() => setRequestsOpen(true)}
         onToggleFavorites={() => setIsFavoritesView((v) => !v)}
+        onOpenProfile={() => setProfileOpen(true)}
         isMineView={isMineView}
         isFavoritesView={isFavoritesView}
         requestsNotification={requestsNotification}
@@ -520,6 +535,15 @@ export default function App() {
         }}
         hintKey={authHintKey}
         onSuccess={handleAuthSuccess}
+      />
+
+      <ProfileModal
+        open={isProfileOpen}
+        onClose={() => setProfileOpen(false)}
+        onSaved={() => {
+          setProfileOpen(false)
+          showToast(t('toastProfileUpdated'))
+        }}
       />
 
       <RequestSwapModal

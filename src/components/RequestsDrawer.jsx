@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { X, Inbox, Check, XIcon, MessageSquare, MessageCircle, CircleCheck, Ban, BookOpen } from 'lucide-react'
+import { X, Inbox, Check, XIcon, MessageSquare, MessageCircle, CircleCheck, Ban, BookOpen, ShieldCheck } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { resolveUserName, resolveUserPhone, buildWhatsappLink } from '../utils/people.js'
+import { resolveUserName, isValidPhone, buildWhatsappLink } from '../utils/people.js'
 import { getPlaceByKey, placeLabel } from '../data/places.js'
 import { formatDateTime } from '../utils/format.js'
 
@@ -55,7 +55,7 @@ const TABS = ['incoming', 'outgoing', 'history']
 
 export default function RequestsDrawer({ open, onClose, proposals, books, onAccept, onDecline, onCancel, onComplete, onOpenChat }) {
   const { t, lang } = useLanguage()
-  const { user } = useAuth()
+  const { user, getPublicUserById } = useAuth()
   const [tab, setTab] = useState('incoming')
 
   if (!open) return null
@@ -132,10 +132,12 @@ export default function RequestsDrawer({ open, onClose, proposals, books, onAcce
                 const requestedBook = getBook(p.requestedBookId)
                 const offeredBook = getBook(p.offeredBookId)
                 const counterpartId = perspective === 'incoming' ? p.offeredByUserId : p.requestedBookOwnerId
-                const counterpart = resolveUserName(counterpartId, user, lang)
+                const counterpart = resolveUserName(counterpartId, user, lang, getPublicUserById)
                 const statusKey = statusKeyByPerspective[perspective][p.status] || 'statusPending'
                 const requestedBookLocation = getBookLocation(requestedBook)
-                const whatsappHref = buildWhatsappLink(resolveUserPhone(counterpartId), t('whatsappGreeting'))
+                const counterpartPhone = getPublicUserById(counterpartId)?.phone
+                const canWhatsapp = isValidPhone(user.phone) && isValidPhone(counterpartPhone)
+                const whatsappHref = canWhatsapp ? buildWhatsappLink(counterpartPhone, t('whatsappGreeting')) : null
                 const requestedTitle = requestedBook ? (lang === 'he' ? requestedBook.titleHe : requestedBook.titleEn) : ''
 
                 return (
@@ -218,15 +220,22 @@ export default function RequestsDrawer({ open, onClose, proposals, books, onAcce
                               <MessageSquare size={13} />
                               {t('openChat')}
                             </button>
-                            <a
-                              href={whatsappHref}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex min-h-9 items-center gap-1 rounded-lg bg-[#25D366] px-3 py-1.5 text-xs font-semibold text-white transition hover:brightness-95"
-                            >
-                              <MessageCircle size={13} />
-                              {t('openWhatsapp')}
-                            </a>
+                            {canWhatsapp ? (
+                              <a
+                                href={whatsappHref}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex min-h-9 items-center gap-1 rounded-lg bg-[#25D366] px-3 py-1.5 text-xs font-semibold text-white transition hover:brightness-95"
+                              >
+                                <MessageCircle size={13} />
+                                {t('openWhatsapp')}
+                              </a>
+                            ) : (
+                              <span className="flex min-h-9 items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-500">
+                                <ShieldCheck size={13} />
+                                {t('whatsappPrivacyBadge')}
+                              </span>
+                            )}
                             <button
                               type="button"
                               onClick={() => onComplete(p.id)}

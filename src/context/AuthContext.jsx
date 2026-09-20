@@ -44,12 +44,18 @@ export function AuthProvider({ children }) {
   }, [sessionUserId])
 
   const register = useCallback(
-    (name, email, password) => {
+    (name, email, password, phone) => {
       const normalizedEmail = email.trim().toLowerCase()
       if (users.some((u) => u.email === normalizedEmail)) {
         return { error: 'emailTaken' }
       }
-      const newUser = { id: makeId('user'), name: name.trim(), email: normalizedEmail, password }
+      const newUser = {
+        id: makeId('user'),
+        name: name.trim(),
+        email: normalizedEmail,
+        password,
+        phone: phone?.trim() || null,
+      }
       setUsers((prev) => [...prev, newUser])
       setSessionUserId(newUser.id)
       return { ok: true }
@@ -70,16 +76,32 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(() => setSessionUserId(null), [])
 
+  const updateProfile = useCallback((fields) => {
+    setUsers((prev) => prev.map((u) => (u.id === sessionUserId ? { ...u, ...fields } : u)))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionUserId])
+
+  const toPublicUser = (record) => {
+    const { password: _password, ...publicUser } = record
+    return publicUser
+  }
+
   const user = useMemo(() => {
     const match = users.find((u) => u.id === sessionUserId)
-    if (!match) return null
-    const { password: _password, ...publicUser } = match
-    return publicUser
+    return match ? toPublicUser(match) : null
   }, [users, sessionUserId])
 
+  const getPublicUserById = useCallback(
+    (id) => {
+      const match = users.find((u) => u.id === id)
+      return match ? toPublicUser(match) : null
+    },
+    [users],
+  )
+
   const value = useMemo(
-    () => ({ user, register, login, logout, isAuthenticated: !!user }),
-    [user, register, login, logout],
+    () => ({ user, register, login, logout, updateProfile, getPublicUserById, isAuthenticated: !!user }),
+    [user, register, login, logout, updateProfile, getPublicUserById],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

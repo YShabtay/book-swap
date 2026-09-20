@@ -73,7 +73,7 @@ export const translations = {
     listedBy: 'Listed by {{name}}',
     requestSwap: 'Request Swap',
     bookStatusReserved: 'Swap in Progress',
-    bookStatusSwapped: 'Already Swapped',
+    bookStatusSwapped: 'Swapped',
     bookLockedAction: 'In Approved Swap',
 
     // Locked swap warning modal
@@ -135,10 +135,19 @@ export const translations = {
     fieldEmailPh: 'e.g. dana@example.com',
     fieldPassword: 'Password',
     fieldPasswordPh: 'At least 4 characters',
+    fieldPhone: 'Phone Number (optional)',
+    fieldPhonePh: 'e.g. +972 50-123-4567',
+    fieldPhoneHint: 'Only shared with your swap partner if you both provide a phone number.',
     authCreateAccount: 'Create Account',
     authSignInSubmit: 'Sign In',
     authErrorEmailTaken: 'This email is already registered — try signing in instead.',
     authErrorInvalidCredentials: 'Incorrect email or password.',
+
+    // Profile modal
+    profileTitle: 'My Profile',
+    profileSubtitle: 'Manage your contact details.',
+    saveProfile: 'Save',
+    toastProfileUpdated: 'Profile updated successfully!',
 
     // Proposal modal
     proposalTitle: 'Propose a Swap',
@@ -191,6 +200,7 @@ export const translations = {
     ownerLabelInline: 'Owner: {{name}}',
     locationLabelInline: 'Location: {{place}}',
     whatsappGreeting: "Hi! Let's coordinate our book swap on BookSwap 📚",
+    whatsappPrivacyBadge: 'In-app chat only (WhatsApp requires mutual phone sharing)',
 
     // Chat
     chatWith: 'Chat with {{name}}',
@@ -301,7 +311,7 @@ export const translations = {
     listedBy: 'פורסם על ידי {{name}}',
     requestSwap: 'בקש החלפה',
     bookStatusReserved: 'בהליך החלפה',
-    bookStatusSwapped: 'הוחלף בהצלחה',
+    bookStatusSwapped: 'הוחלף',
     bookLockedAction: 'בהחלפה מאושרת',
 
     // Locked swap warning modal
@@ -363,10 +373,19 @@ export const translations = {
     fieldEmailPh: 'לדוגמה: dana@example.com',
     fieldPassword: 'סיסמה',
     fieldPasswordPh: 'לפחות 4 תווים',
+    fieldPhone: 'מספר טלפון (אופציונלי)',
+    fieldPhonePh: 'לדוגמה: 050-1234567',
+    fieldPhoneHint: 'המספר ישותף עם שותף ההחלפה שלך רק אם שניכם מספקים מספר טלפון.',
     authCreateAccount: 'צור חשבון',
     authSignInSubmit: 'התחבר',
     authErrorEmailTaken: 'כתובת האימייל כבר רשומה — נסו להתחבר במקום.',
     authErrorInvalidCredentials: 'אימייל או סיסמה שגויים.',
+
+    // Profile modal
+    profileTitle: 'הפרופיל שלי',
+    profileSubtitle: 'נהלו את פרטי הקשר שלכם.',
+    saveProfile: 'שמור',
+    toastProfileUpdated: 'הפרופיל עודכן בהצלחה!',
 
     // Proposal modal
     proposalTitle: 'הצעת החלפה',
@@ -419,6 +438,7 @@ export const translations = {
     ownerLabelInline: 'בעלים: {{name}}',
     locationLabelInline: 'מיקום: {{place}}',
     whatsappGreeting: 'היי! בואו נתאם את החלפת הספרים דרך BookSwap 📚',
+    whatsappPrivacyBadge: "תיאום בצ'אט בלבד",
 
     // Chat
     chatWith: 'צ\'אט עם {{name}}',

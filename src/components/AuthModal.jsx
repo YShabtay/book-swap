@@ -13,6 +13,7 @@ export default function AuthModal({ open, onClose, hintKey, onSuccess }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [phone, setPhone] = useState('')
   const [error, setError] = useState(null)
 
   if (!open) return null
@@ -21,6 +22,7 @@ export default function AuthModal({ open, onClose, hintKey, onSuccess }) {
     setName('')
     setEmail('')
     setPassword('')
+    setPhone('')
     setError(null)
   }
 
@@ -36,7 +38,7 @@ export default function AuthModal({ open, onClose, hintKey, onSuccess }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const result = tab === 'register' ? register(name, email, password) : login(email, password)
+    const result = tab === 'register' ? register(name, email, password, phone) : login(email, password)
     if (result.error) {
       setError(result.error)
       return
@@ -128,6 +130,20 @@ export default function AuthModal({ open, onClose, hintKey, onSuccess }) {
               className={inputClass}
             />
           </label>
+
+          {tab === 'register' && (
+            <label className="flex flex-col gap-1.5">
+              <span className="text-sm font-semibold text-slate-700">{t('fieldPhone')}</span>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder={t('fieldPhonePh')}
+                className={inputClass}
+              />
+              <span className="text-xs text-slate-400">{t('fieldPhoneHint')}</span>
+            </label>
+          )}
 
           {error && (
             <div className="flex items-start gap-2 rounded-xl bg-rose-50 px-3.5 py-2.5 text-sm text-rose-600">

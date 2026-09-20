@@ -28,6 +28,7 @@ export default function Header({
   onToggleMyBooks,
   onOpenRequests,
   onToggleFavorites,
+  onOpenProfile,
   isMineView,
   isFavoritesView,
   requestsNotification,
@@ -120,12 +121,19 @@ export default function Header({
 
           {user ? (
             <div className="flex min-h-11 items-center gap-1.5 rounded-full border border-slate-200 bg-white py-1 ps-1 pe-2 shadow-sm">
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
-                {user.name?.[0]?.toUpperCase()}
-              </div>
-              <span className="hidden max-w-[6rem] truncate text-sm font-semibold text-slate-700 sm:inline">
-                {user.name}
-              </span>
+              <button
+                type="button"
+                onClick={onOpenProfile}
+                title={t('profileTitle')}
+                className="flex items-center gap-1.5 rounded-full transition hover:opacity-80 active:scale-95"
+              >
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
+                  {user.name?.[0]?.toUpperCase()}
+                </span>
+                <span className="hidden max-w-[6rem] truncate text-sm font-semibold text-slate-700 sm:inline">
+                  {user.name}
+                </span>
+              </button>
               <button
                 type="button"
                 onClick={logout}

@@ -6,7 +6,7 @@ import { resolveUserName } from '../utils/people.js'
 
 export default function ChatDrawer({ open, proposal, onClose, onSendMessage }) {
   const { t, lang } = useLanguage()
-  const { user } = useAuth()
+  const { user, getPublicUserById } = useAuth()
   const [text, setText] = useState('')
   const bottomRef = useRef(null)
 
@@ -18,7 +18,7 @@ export default function ChatDrawer({ open, proposal, onClose, onSendMessage }) {
 
   const isSender = proposal.offeredByUserId === user.id
   const counterpartId = isSender ? proposal.requestedBookOwnerId : proposal.offeredByUserId
-  const counterpartName = resolveUserName(counterpartId, user, lang)
+  const counterpartName = resolveUserName(counterpartId, user, lang, getPublicUserById)
 
   const handleSubmit = (e) => {
     e.preventDefault()
